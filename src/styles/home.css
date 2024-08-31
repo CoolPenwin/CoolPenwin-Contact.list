@@ -1,3 +1,6 @@
+li{
+  min-width: 232px;
+}
 .input__container1 {
   position: relative;
   background: #f0f0f0;
