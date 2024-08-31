@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { URLs } from "../component/Config.js";
 
+import Swal from 'sweetalert2';
 import { Context } from "../store/appContext";
 
 import "../../styles/demo.css";
@@ -36,7 +37,13 @@ export const Demo = () => {
       });
       if (response.ok) {
         actions.loadSomeData();
-        alert("Contacto añadido con éxito");
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Contacto añadido con éxito",
+          showConfirmButton: false,
+          timer: 2000
+          });
         resetForm(); // Restablecer el formulario
       } else {
         console.error("Error al añadir el contacto");

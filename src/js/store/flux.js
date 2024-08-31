@@ -1,4 +1,5 @@
 import { URLs } from "../component/Config.js";
+import Swal from 'sweetalert2';
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -60,7 +61,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 					if (response.ok) {
 						getActions().loadSomeData();
-					  alert("Contacto modificado con éxito");
+					  
+					  Swal.fire({
+						position: "top-end",
+						icon: "success",
+						title: "Contacto modificado con éxito",
+						showConfirmButton: false,
+						timer: 2000
+					  });
 					  resetForm(); // Restablecer el formulario
 					} else {
 					  console.error("Error al modificar el contacto");
