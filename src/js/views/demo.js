@@ -1,43 +1,118 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { URLs } from "../component/Config.js";
 
 import { Context } from "../store/appContext";
 
 import "../../styles/demo.css";
 
 export const Demo = () => {
-	const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
 
-	return (
-		<div className="container">
-			<ul className="list-group">
-				{store.demo.map((item, index) => {
-					return (
-						<li
-							key={index}
-							className="list-group-item d-flex justify-content-between"
-							style={{ background: item.background }}>
-							<Link to={"/single/" + index}>
-								<span>Link to: {item.title}</span>
-							</Link>
-							{// Conditional render example
-							// Check to see if the background is orange, if so, display the message
-							item.background === "orange" ? (
-								<p style={{ color: item.initial }}>
-									Check store/flux.js scroll to the actions to see the code
-								</p>
-							) : null}
-							<button className="btn btn-success" onClick={() => actions.changeColor(index, "orange")}>
-								Change Color
-							</button>
-						</li>
-					);
-				})}
-			</ul>
-			<br />
-			<Link to="/">
-				<button className="btn btn-primary">Back home</button>
-			</Link>
-		</div>
-	);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(URLs.createAgendaContact, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+      if (response.ok) {
+        alert("Contacto añadido con éxito");
+        resetForm(); // Restablecer el formulario
+      } else {
+        alert("Error al añadir el contacto");
+      }
+    } catch (error) {
+      alert("Error al conectar con la API");
+    }
+  };
+  
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      address: ""
+    });
+  };
+
+  return (
+    <>
+      <div className="container">
+        <div className="input__container">
+          <div className="shadow__input"></div>
+          <button className="input__button__shadow">
+            <svg
+              xmlns="https://cdn-icons-png.flaticon.com/512/188/188128.png"
+              viewBox="0 0 24 24"
+              fill="#000000"
+              width="20px"
+              height="20px"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+          </button>
+          <ul>
+            <input
+              type="text"
+              name="name"
+              className="input__search"
+              placeholder="Enter Full Name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <input
+              type="email"
+              name="email"
+              className="input__search"
+              placeholder="Enter email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="phone"
+              className="input__search"
+              placeholder="Enter phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="address"
+              className="input__search"
+              placeholder="Enter address"
+              value={formData.address}
+              onChange={handleChange}
+            />
+          </ul>
+
+          <button className="btn btn-primary" onClick={handleSubmit}>
+            Enviar
+          </button>
+
+          <br />
+          <Link to="/">or Back home</Link>
+        </div>
+      </div>
+    </>
+  );
 };
