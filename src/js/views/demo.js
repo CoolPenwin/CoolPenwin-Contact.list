@@ -39,10 +39,10 @@ export const Demo = () => {
         alert("Contacto añadido con éxito");
         resetForm(); // Restablecer el formulario
       } else {
-        alert("Error al añadir el contacto");
+        console.error("Error al añadir el contacto");
       }
     } catch (error) {
-      alert("Error al conectar con la API");
+      console.error("Error al conectar con la API");
     }
   };
   

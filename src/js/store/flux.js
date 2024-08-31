@@ -63,10 +63,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					  alert("Contacto modificado con éxito");
 					  resetForm(); // Restablecer el formulario
 					} else {
-					  alert("Error al modificar el contacto");
+					  console.error("Error al modificar el contacto");
 					}
 				  } catch (error) {
-					alert("Error al conectar con la API");
+					console.error("Error al conectar con la API");
 				  }
 
 			}
