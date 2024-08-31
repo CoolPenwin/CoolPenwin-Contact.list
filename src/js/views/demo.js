@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { URLs } from "../component/Config.js";
 
 import { Context } from "../store/appContext";
@@ -7,6 +7,7 @@ import { Context } from "../store/appContext";
 import "../../styles/demo.css";
 
 export const Demo = () => {
+  const navigate=useNavigate();
   const { store, actions } = useContext(Context);
   const [formData, setFormData] = useState({
     name: "",
@@ -34,6 +35,7 @@ export const Demo = () => {
         body: JSON.stringify(formData)
       });
       if (response.ok) {
+        actions.loadSomeData();
         alert("Contacto añadido con éxito");
         resetForm(); // Restablecer el formulario
       } else {
@@ -44,6 +46,17 @@ export const Demo = () => {
     }
   };
   
+const handleForm=(e)=>{
+   if(store.edit){
+    actions.editContact(store.edit_id , formData)
+   }
+   else{
+    handleSubmit(e)
+   }
+   actions.setEditFalse()
+   navigate("/");
+}
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -56,7 +69,7 @@ export const Demo = () => {
   return (
     <>
       <div className="container">
-        <div className="input__container">
+        <div className={store.edit? `input__container2`:`input__container`}>
           <div className="shadow__input"></div>
           <button className="input__button__shadow">
             <svg
@@ -105,7 +118,7 @@ export const Demo = () => {
             />
           </ul>
 
-          <button className="btn btn-primary" onClick={handleSubmit}>
+          <button className="btn btn-primary" onClick={(e)=>handleForm(e)}>
             Enviar
           </button>
 

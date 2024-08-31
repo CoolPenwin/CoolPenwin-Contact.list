@@ -3,8 +3,11 @@ import { URLs } from "../component/Config.js";
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			contacts: [] // Cambiado de demo a contacts
+			contacts: [],
+			edit: false,
+			edit_id: null,
 		},
+
 		actions: {
 			
 			loadSomeData: () => {
@@ -26,6 +29,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!response.ok) {
 						throw new Error('Error deleting contact');
 					}
+					getActions().loadSomeData();
 					return response.json();
 				})
 				.then(() => {
@@ -37,6 +41,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.catch(error => {
 					console.error("Error deleting contact:", error);
 				});
+			},
+			setEditTrue: (id)=>{
+				setStore({edit: true})
+				setStore({edit_id: id})
+			},
+			setEditFalse: ()=>{
+				setStore({edit: false})
+			},
+			editContact: async (contactId, formData)=>{
+				try {
+					const response = await fetch(URLs.updateAgendaContact(contactId), {
+					  method: "PUT",
+					  headers: {
+						"Content-Type": "application/json"
+					  },
+					  body: JSON.stringify(formData)
+					});
+					if (response.ok) {
+						getActions().loadSomeData();
+					  alert("Contacto modificado con éxito");
+					  resetForm(); // Restablecer el formulario
+					} else {
+					  alert("Error al modificar el contacto");
+					}
+				  } catch (error) {
+					alert("Error al conectar con la API");
+				  }
+
 			}
 		}
 	};
