@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { URLs } from "../component/Config.js";
 
+import Swal from 'sweetalert2';
 import { Context } from "../store/appContext";
 
 import "../../styles/demo.css";
 
 export const Demo = () => {
+  const navigate=useNavigate();
   const { store, actions } = useContext(Context);
   const [formData, setFormData] = useState({
     name: "",
@@ -34,16 +36,34 @@ export const Demo = () => {
         body: JSON.stringify(formData)
       });
       if (response.ok) {
-        alert("Contacto añadido con éxito");
+        actions.loadSomeData();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Contacto añadido con éxito",
+          showConfirmButton: false,
+          timer: 2000
+          });
         resetForm(); // Restablecer el formulario
       } else {
-        alert("Error al añadir el contacto");
+        console.error("Error al añadir el contacto");
       }
     } catch (error) {
-      alert("Error al conectar con la API");
+      console.error("Error al conectar con la API");
     }
   };
   
+const handleForm=(e)=>{
+   if(store.edit){
+    actions.editContact(store.edit_id , formData)
+   }
+   else{
+    handleSubmit(e)
+   }
+   actions.setEditFalse()
+   navigate("/");
+}
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -56,7 +76,7 @@ export const Demo = () => {
   return (
     <>
       <div className="container">
-        <div className="input__container">
+        <div className={store.edit? `input__container2`:`input__container`}>
           <div className="shadow__input"></div>
           <button className="input__button__shadow">
             <svg
@@ -105,7 +125,7 @@ export const Demo = () => {
             />
           </ul>
 
-          <button className="btn btn-primary" onClick={handleSubmit}>
+          <button className="btn btn-primary" onClick={(e)=>handleForm(e)}>
             Enviar
           </button>
 

@@ -1,10 +1,14 @@
 import { URLs } from "../component/Config.js";
+import Swal from 'sweetalert2';
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			contacts: [] // Cambiado de demo a contacts
+			contacts: [],
+			edit: false,
+			edit_id: null,
 		},
+
 		actions: {
 			
 			loadSomeData: () => {
@@ -26,6 +30,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!response.ok) {
 						throw new Error('Error deleting contact');
 					}
+					getActions().loadSomeData();
 					return response.json();
 				})
 				.then(() => {
@@ -37,6 +42,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.catch(error => {
 					console.error("Error deleting contact:", error);
 				});
+			},
+			setEditTrue: (id)=>{
+				setStore({edit: true})
+				setStore({edit_id: id})
+			},
+			setEditFalse: ()=>{
+				setStore({edit: false})
+			},
+			editContact: async (contactId, formData)=>{
+				try {
+					const response = await fetch(URLs.updateAgendaContact(contactId), {
+					  method: "PUT",
+					  headers: {
+						"Content-Type": "application/json"
+					  },
+					  body: JSON.stringify(formData)
+					});
+					if (response.ok) {
+						getActions().loadSomeData();
+					  
+					  Swal.fire({
+						position: "top-end",
+						icon: "success",
+						title: "Contacto modificado con éxito",
+						showConfirmButton: false,
+						timer: 2000
+					  });
+					  resetForm(); // Restablecer el formulario
+					} else {
+					  console.error("Error al modificar el contacto");
+					}
+				  } catch (error) {
+					console.error("Error al conectar con la API");
+				  }
+
 			}
 		}
 	};

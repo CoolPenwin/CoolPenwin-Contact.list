@@ -1,17 +1,23 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Single = (props) => {
   const { store, actions } = useContext(Context);
   const params = useParams();
   const contact = store.contacts[params.theid];
+  const navigate = useNavigate ();
 
-  // Función para manejar la eliminación del contacto
-  const handleDelete = () => {
-    actions.deleteContact(params.theid);
-  };
+  const handleDelete = () =>{
+    actions.deleteContact(contact.id);
+    navigate("/");
+  }
+  const handleEdit = (id)=>{
+    actions.setEditTrue(id);
+    navigate("/demo");
+    
+  }
 
   return (
     <div className="text-center mt-5">
@@ -29,24 +35,33 @@ export const Single = (props) => {
             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
         </button>
-        <ul className="list-group">
-          <li className="list-group-item input__search">
-            <div className="shadow__input"></div>
+        <ul className="list-group text-center mt-5">
+          <li className="list-group-item input__search ">
+            <div className="shadow__input text-center mt-5"></div>
             
             <span>{contact.name}</span>
           </li>
-          <li className="list-group-item input__search">
+          <li className="list-group-item input__search text-center mt-5">
             <div className="shadow__input"></div>
             
             <span>{contact.email}</span>
           </li>
+         
           <li className="list-group-item input__search">
             <div className="shadow__input"></div>
            
             <span>{contact.phone}</span>
           </li>
-         
-            <button onClick={() => actions.deleteContact(contact.id)} className="btn btn-danger ms-2">
+          <li className="list-group-item input__search">
+            <div className="shadow__input text-center mt-5"></div>
+           
+            <span>{contact.address}</span>
+          </li>
+            <button onClick={() => handleEdit(contact.id)} className="btn btn-danger ms-2">
+              EDITAR
+            </button>
+
+            <button onClick={() =>handleDelete ()} className="btn btn-danger ms-2">
               Eliminar
             </button>
           
